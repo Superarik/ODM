@@ -1,9 +1,9 @@
 <?php
-$server ="localhost";
-$username = "root";
-$password = "";
+$server ="plesk.remote.ac";
+$username = "ws373176.remote.ac_vfzhg5fyxg";
+$password = "Lup^&5euXgD";
 // ========================== TASK 1
-$database = "";
+$database = "WS373176_WADDEV";
 // ========================== TASK 1
 $connect = mysqli_connect($server,$username,$password,$database);
 
