@@ -1,7 +1,7 @@
 <?php
 $server ="WS373176-odm.remote.ac";
-$username = "ws373176.remote.ac_vfzhg5fyxg";
-$password = "8V!jxt3eYbk";
+$username = "WS373176_admin";
+$password = "%txWH9!dLpw";
 // ========================== TASK 1
 $database = "WS373176_SAD";
 // ========================== TASK 1
