@@ -34,7 +34,17 @@ $staff_id = (isset($_POST["staff_id"])) ? mysqli_real_escape_string($connect, $_
         $staff_check = '';
         if($staff_id)$staff_check = "WHERE s.id = '$staff_id'";
         
-        $sql = "";    
+        $sql = "SELECT
+                    staff.id,
+                    staff.first_name,
+                    staff.last_name,
+                    SUM(job.radiation_exposure) AS exposure
+                FROM work_schedule
+                JOIN staff ON work_schedule.staff_id = staff.id
+                JOIN job ON work_schedule.job_id = job.id
+                $staff_check
+                GROUP BY staff.id
+                ORDER BY exposure DESC";    
         // ========================== /Task 4
 
 
