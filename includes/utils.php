@@ -132,7 +132,13 @@ function selectAllStaff($connect){
     //
     // Make sure to ORDER BY staff.clearance_level ASC
     //
-    $staff_sql = "";
+    $staff_sql = "SELECT
+                    id,
+                    first_name,
+                    last_name,
+                    clearance_level
+                FROM staff
+                ORDER BY clearance_level ASC;";
     // ========================== /Part 6
 
     return runAndCheckSQL($connect, $staff_sql); 
