@@ -157,7 +157,14 @@ function selectAllJobsAndLocations($connect){
     //
     // Make sure to ORDER BY location.required_clearance_level ASC
     //
-    $job_sql = "";
+    $job_sql = "SELECT
+                    job.id,
+                    job.name AS job_name,
+                    job.radiation_exposure,
+                    location.name AS location_name,
+                    location.required_clearance_level
+                FROM job
+                JOIN location ON job.location_id = location.id;";
     // ========================== /Part 7
     return runAndCheckSQL($connect, $job_sql);
 }
