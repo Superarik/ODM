@@ -30,13 +30,13 @@ function showWorkTable($week, $day, $connect){
     // SELECT conditions are based on work_schedule.week_id and work_schedule.day_id
     //
     $sql = "SELECT
-            work_schedule.id,
+            work_schedule.id AS work_schedule_id,
             staff.first_name,
             staff.last_name,
-            staff.clearance_level,
-            job.name,
+            staff.clearance_level AS staff_clearance_level,
+            job.name AS job_name,
             job.radiation_exposure,
-            location.name,
+            location.name AS location_name,
             location.required_clearance_level
             FROM
             work_schedule
