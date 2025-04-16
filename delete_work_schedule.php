@@ -8,7 +8,7 @@ $id = $_POST['id'];
 //
 // DELETE a work_schedule entry based on $id from above
 //
-$sql = "";
+$sql = "DELETE FROM work_schedule WHERE work_schedule.id = '$id';";
 // ========================== /Part 5
 
 
