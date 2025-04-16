@@ -29,7 +29,22 @@ function showWorkTable($week, $day, $connect){
     //
     // SELECT conditions are based on work_schedule.week_id and work_schedule.day_id
     //
-    $sql = "";    
+    $sql = "SELECT
+            work_schedule.id,
+            staff.first_name,
+            staff.last_name,
+            staff.clearance_level,
+            job.name,
+            job.radiation_exposure,
+            location.name,
+            location.required_clearance_level
+            FROM
+            work_schedule
+            JOIN staff ON work_schedule.staff_id = staff.id
+            JOIN job ON work_schedule.job_id = job.id
+            JOIN location ON work_schedule.location_id = location.id
+            WHERE work_schedule.week_id = '$week'
+            AND work_schedule.day_id = '$day';";    
     // ========================== /Task 3
 
     $run = runAndCheckSQL($connect,$sql);
