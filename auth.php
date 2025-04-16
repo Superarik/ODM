@@ -20,7 +20,7 @@ $password = mysqli_real_escape_string($connect,$_POST["password"]);
 //
 // You need to use $username and $password from above to find a matching staff member
 //
-$sql = "";
+$sql = "SELECT * FROM accounts WHERE username = ? AND password = ?;";
 // ========================== /TASK 2
 
 
