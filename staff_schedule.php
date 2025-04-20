@@ -17,7 +17,11 @@ $staff_id = (isset($_GET["id"])) ? mysqli_real_escape_string($connect, $_GET["id
 //
 // Make sure you use $staff_id variable in your WHERE clause to SELECT staff member based on ID
 //
-$staff_data_sql = "";
+$staff_data_sql = "SELECT
+                        first_name,
+                        last_name
+                    FROM staff
+                    WHERE id = '$staff_id'";
 // ========================== /YOUR SQL HERE
 
 
