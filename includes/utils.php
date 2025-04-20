@@ -199,7 +199,11 @@ function selectAllDays($connect){
     //
     // Make sure to ORDER BY days.id ASC
     //
-    $day_sql = "";
+    $day_sql = "SELECT
+                    days.id,
+                    days.day
+                FROM days
+                ORDER BY days.id ASC;";
     // ========================== /Part 9
     return runAndCheckSQL($connect, $day_sql);
 }
