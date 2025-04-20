@@ -219,7 +219,13 @@ function selectASingleWorkSchedule($connect, $id){
     //
     // USE the php variable $id in the WHERE clause
     //
-    $appointed_sql = "";
+    $appointed_sql = "SELECT
+                        week_id,
+                        day_id,
+                        job_id,
+                        staff_id
+                    FROM work_schedule
+                    WHERE id = '$id'";
     // ========================== /Part 12
     return runAndCheckSQL($connect, $appointed_sql);
 }
