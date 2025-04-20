@@ -180,7 +180,12 @@ function selectAllWeeks($connect){
     //
     // Make sure to ORDER BY weeks.id ASC
     //
-    $week_sql = "";
+    $week_sql = "SELECT
+                    weeks.id,
+                    weeks.week_starts,
+                    weeks.week_ends
+                FROM weeks
+                ORDER BY weeks.id ASC;";
     // ========================== /Part 8
     return runAndCheckSQL($connect, $week_sql);
 }
