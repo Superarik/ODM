@@ -55,7 +55,26 @@ if($row = mysqli_fetch_assoc($result)){
         //
         // Make sure to use $staff_id to SELECT the correct staff member based on ID
         //
-        $jobs_sql = "";    
+        $jobs_sql = "SELECT
+                        ws.id AS work_schedule_id,
+                        s.first_name,
+                        s.last_name,
+                        s.clearance_level AS staff_clearance_level,
+                        j.name AS job_name,
+                        j.radiation_exposure,
+                        l.name AS location_name,
+                        l.required_clearance_level,
+                        w.id AS week_id,
+                        w.week_starts,
+                        w.week_ends,
+                        d.day
+                    FROM work_schedule ws
+                    JOIN staff s ON ws.staff_id = s.id
+                    JOIN job j ON ws.job_id = j.id
+                    JOIN location l ON ws.location_id = l.id
+                    JOIN weeks w ON ws.week_id = w.id
+                    JOIN days d ON ws.day_id = d.id
+                    WHERE s.id = '$staff_id'";    
         // ========================== /YOUR SQL HERE
         
         $run = runAndCheckSQL($connect, $jobs_sql);
