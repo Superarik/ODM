@@ -23,7 +23,13 @@ if($work_week_id && $work_day_id && $work_job_id && $work_staff_id){
     // You need to create an INSERT query here to create a new work_schedule
     // To acquire the location_id you will need to create a nested SELECT query for one of the values
     //
-    $add_job_sql = "";
+    $add_job_sql = "INSERT INTO work_schedule (week_id, day_id, staff_id, job_id, location_id)
+                    VALUES (
+                        '$work_week_id',
+                        '$work_day_id',
+                        '$work_staff_id',
+                        '$work_job_id',
+                        (SELECT location_id FROM job WHERE id = '$work_job_id')";
     // ========================== /Part 10
 
     if(runAndCheckSQL($connect, $add_job_sql)){
