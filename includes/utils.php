@@ -161,7 +161,7 @@ function selectAllJobsAndLocations($connect){
                     job.id AS job_id,
                     job.name AS job_name,
                     job.radiation_exposure,
-                    location.name AS location_name,
+                    location.name AS location,
                     location.required_clearance_level
                 FROM job
                 JOIN location ON job.location_id = location.id;";
