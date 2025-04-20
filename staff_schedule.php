@@ -56,25 +56,25 @@ if($row = mysqli_fetch_assoc($result)){
         // Make sure to use $staff_id to SELECT the correct staff member based on ID
         //
         $jobs_sql = "SELECT
-                        ws.id AS work_schedule_id,
-                        s.first_name,
-                        s.last_name,
-                        s.clearance_level AS staff_clearance_level,
-                        j.name AS job_name,
-                        j.radiation_exposure,
-                        l.name AS location_name,
-                        l.required_clearance_level,
-                        w.id AS week_id,
-                        w.week_starts,
-                        w.week_ends,
-                        d.day
-                    FROM work_schedule ws
-                    JOIN staff s ON ws.staff_id = s.id
-                    JOIN job j ON ws.job_id = j.id
-                    JOIN location l ON ws.location_id = l.id
-                    JOIN weeks w ON ws.week_id = w.id
-                    JOIN days d ON ws.day_id = d.id
-                    WHERE s.id = '$staff_id'";    
+                        work_schedule.id AS work_schedule_id,
+                        staff.first_name,
+                        staff.last_name,
+                        staff.clearance_level AS staff_clearance_level,
+                        job.name AS job_name,
+                        job.radiation_exposure,
+                        location.name AS location_name,
+                        location.required_clearance_level,
+                        weeks.id AS week_id,
+                        weeks.week_starts,
+                        weeks.week_ends,
+                        days.day
+                    FROM work_schedule
+                    JOIN staff ON work_schedule.staff_id = staff.id
+                    JOIN job ON work_schedule.job_id = job.id
+                    JOIN location ON work_schedule.location_id = location.id
+                    JOIN weeks ON work_schedule.week_id = weeks.id
+                    JOIN days ON work_schedule.day_id = days.id
+                    WHERE staff.id = '$staff_id'";    
         // ========================== /YOUR SQL HERE
         
         $run = runAndCheckSQL($connect, $jobs_sql);
