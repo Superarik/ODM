@@ -16,7 +16,7 @@ $edit_appointment_successful = false;
 
 if($work_week && $work_day && $work_job && $work_staff){
     
-    // ========================== Part 12
+    // ========================== Part 11
     //
     // You need to create an UPDATE query here to update this job
     // To acquire the location_id you will need to create a nested SELECT query for one of the values
@@ -24,7 +24,7 @@ if($work_week && $work_day && $work_job && $work_staff){
     // Make sure you use the $appointment_id from line 8 in your WHERE clause.
     //
     $add_job_sql = "";
-    // ========================== /Part 12    
+    // ========================== /Part 11    
 
     if(runAndCheckSQL($connect, $add_job_sql)){
         $edit_appointment_successful = true;
