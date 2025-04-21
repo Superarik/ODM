@@ -5,6 +5,8 @@ include_once("includes/nav.php");
 include_once("includes/utils.php");
 ?>
 
+<?php
+
 <!-- ====================================================== -->
 <!-- PAGE CONTENT STARTS HERE -->
 <!-- ====================================================== -->
