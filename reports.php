@@ -9,40 +9,120 @@ include_once("includes/utils.php");
 <!-- PAGE CONTENT STARTS HERE -->
 <!-- ====================================================== -->
 
-<h2 class="mt-5">Staff & Work Allocation Reports</h2>
+// Query 1: Jobs Allocated to Each Staff Member
+$jobs_allocated_sql = "
+    SELECT s.first_name, s.last_name, COUNT(ws.id) AS job_count
+    FROM staff s
+    LEFT JOIN work_schedule ws ON s.id = ws.staff_id
+    GROUP BY s.id
+    ORDER BY job_count DESC
+";
+$jobs_result = runAndCheckSQL($connect, $jobs_allocated_sql);
 
-<div class="container mt-4">
+// Query 2: Total Radiation Exposure by Staff
+$exposure_sql = "
+    SELECT s.first_name, s.last_name, SUM(j.radiation_exposure) AS total_exposure
+    FROM staff s
+    JOIN work_schedule ws ON s.id = ws.staff_id
+    JOIN job j ON ws.job_id = j.id
+    GROUP BY s.id
+    ORDER BY total_exposure DESC
+";
+$exposure_result = runAndCheckSQL($connect, $exposure_sql);
 
-    <!-- Report 1: Jobs per Staff Member (uses 3 tables: work_schedule, staff, job) -->
-    <h3>Jobs Allocated to Staff</h3>
-    <p>This report shows how many jobs each staff member has been assigned. Useful for workload monitoring.</p>
+// Query 3: Staff With No Work Allocated
+$no_work_sql = "
+    SELECT s.first_name, s.last_name
+    FROM staff s
+    LEFT JOIN work_schedule ws ON s.id = ws.staff_id
+    WHERE ws.id IS NULL
+";
+$no_work_result = runAndCheckSQL($connect, $no_work_sql);
+?>
+
+<!-- Load Google Charts -->
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+    google.charts.load('current', {'packages':['corechart', 'bar']});
+    google.charts.setOnLoadCallback(drawCharts);
+
+    function drawCharts() {
+        drawJobsPieChart();
+        drawExposureBarChart();
+    }
+
+    function drawJobsPieChart() {
+        var data = google.visualization.arrayToDataTable([
+            ['Staff Member', 'Number of Jobs'],
+            <?php
+            mysqli_data_seek($jobs_result, 0);
+            while($row = mysqli_fetch_assoc($jobs_result)) {
+                $name = $row['first_name'] . ' ' . $row['last_name'];
+                echo "['$name', {$row['job_count']}],";
+            }
+            ?>
+        ]);
+
+        var options = {
+            title: 'Jobs Allocated to Staff',
+            pieHole: 0.4
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('jobs_piechart'));
+        chart.draw(data, options);
+    }
+
+    function drawExposureBarChart() {
+        var data = google.visualization.arrayToDataTable([
+            ['Staff Member', 'Radiation Exposure'],
+            <?php
+            mysqli_data_seek($exposure_result, 0);
+            while($row = mysqli_fetch_assoc($exposure_result)) {
+                $name = $row['first_name'] . ' ' . $row['last_name'];
+                echo "['$name', {$row['total_exposure']}],";
+            }
+            ?>
+        ]);
+
+        var options = {
+            chart: {
+                title: 'Total Radiation Exposure by Staff',
+            },
+            bars: 'vertical',
+            vAxis: {format: 'decimal'},
+            height: 400
+        };
+
+        var chart = new google.visualization.ColumnChart(document.getElementById('exposure_barchart'));
+        chart.draw(data, options);
+    }
+</script>
+
+<div class="container mt-5">
+    <h2>📊 Staff Job Reports</h2>
+
+    <h4 class="mt-4">1. Jobs Allocated to Each Staff Member</h4>
+    <div id="jobs_piechart" style="width: 100%; height: 400px;"></div>
     <table class="table table-bordered">
         <thead>
             <tr>
                 <th>Staff Name</th>
-                <th>Number of Jobs</th>
+                <th>Jobs Allocated</th>
             </tr>
         </thead>
         <tbody>
             <?php
-            $sql1 = "SELECT s.first_name, s.last_name, COUNT(ws.id) AS job_count
-                     FROM staff s
-                     LEFT JOIN work_schedule ws ON s.id = ws.staff_id
-                     LEFT JOIN job j ON ws.job_id = j.id
-                     GROUP BY s.id
-                     ORDER BY job_count DESC";
-            $result1 = runAndCheckSQL($connect, $sql1);
-            while($row = mysqli_fetch_assoc($result1)) {
+            mysqli_data_seek($jobs_result, 0);
+            while($row = mysqli_fetch_assoc($jobs_result)) {
                 echo "<tr><td>{$row['first_name']} {$row['last_name']}</td><td>{$row['job_count']}</td></tr>";
             }
             ?>
         </tbody>
     </table>
 
-    <!-- Report 2: Total Radiation Exposure (uses 3 tables: staff, work_schedule, job) -->
-    <h3>Total Radiation Exposure by Staff</h3>
-    <p>This report calculates the total radiation exposure each staff member has been assigned to. This helps monitor safety thresholds.</p>
-    <table class="table table-bordered">
+    <h4 class="mt-5">2. Total Radiation Exposure by Staff</h4>
+    <div id="exposure_barchart" style="width: 100%; height: 400px;"></div>
+    <table class="table table-striped">
         <thead>
             <tr>
                 <th>Staff Name</th>
@@ -51,25 +131,16 @@ include_once("includes/utils.php");
         </thead>
         <tbody>
             <?php
-            $sql2 = "SELECT s.first_name, s.last_name, SUM(j.radiation_exposure) AS total_exposure
-                     FROM staff s
-                     JOIN work_schedule ws ON s.id = ws.staff_id
-                     JOIN job j ON ws.job_id = j.id
-                     GROUP BY s.id
-                     ORDER BY total_exposure DESC";
-            $result2 = runAndCheckSQL($connect, $sql2);
-            while($row = mysqli_fetch_assoc($result2)) {
-                $exposure = $row['total_exposure'] ?? 0;
-                echo "<tr><td>{$row['first_name']} {$row['last_name']}</td><td>{$exposure}</td></tr>";
+            mysqli_data_seek($exposure_result, 0);
+            while($row = mysqli_fetch_assoc($exposure_result)) {
+                echo "<tr><td>{$row['first_name']} {$row['last_name']}</td><td>{$row['total_exposure']}</td></tr>";
             }
             ?>
         </tbody>
     </table>
 
-    <!-- Report 3: Staff with No Work (uses 2 tables: staff, work_schedule) -->
-    <h3>Staff Members Without Any Job Allocated</h3>
-    <p>This report shows which staff have not been assigned any work yet. Useful for balancing assignments.</p>
-    <table class="table table-bordered">
+    <h4 class="mt-5">3. Staff With No Work Allocated</h4>
+    <table class="table table-hover">
         <thead>
             <tr>
                 <th>Staff Name</th>
@@ -77,18 +148,12 @@ include_once("includes/utils.php");
         </thead>
         <tbody>
             <?php
-            $sql3 = "SELECT s.first_name, s.last_name
-                     FROM staff s
-                     LEFT JOIN work_schedule ws ON s.id = ws.staff_id
-                     WHERE ws.staff_id IS NULL";
-            $result3 = runAndCheckSQL($connect, $sql3);
-            while($row = mysqli_fetch_assoc($result3)) {
+            while($row = mysqli_fetch_assoc($no_work_result)) {
                 echo "<tr><td>{$row['first_name']} {$row['last_name']}</td></tr>";
             }
             ?>
         </tbody>
     </table>
-
 </div>
 
 
