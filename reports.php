@@ -7,10 +7,6 @@ include_once("includes/utils.php");
 
 <?php
 
-<!-- ====================================================== -->
-<!-- PAGE CONTENT STARTS HERE -->
-<!-- ====================================================== -->
-
 // Query 1: Jobs Allocated to Each Staff Member
 $jobs_allocated_sql = "
     SELECT s.first_name, s.last_name, COUNT(ws.id) AS job_count
@@ -157,11 +153,5 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
         </tbody>
     </table>
 </div>
-
-
-
-<!-- ====================================================== -->
-<!-- PAGE CONTENT ENDS HERE -->
-<!-- ====================================================== -->
 
 <?php include_once("includes/footer.php"); ?>
