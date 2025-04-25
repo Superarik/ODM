@@ -9,31 +9,31 @@ include_once("includes/utils.php");
 
 // Query 1: Jobs Allocated to Each Staff Member
 $jobs_allocated_sql = "
-    SELECT s.first_name, s.last_name, COUNT(ws.id) AS job_count
-    FROM staff s
-    LEFT JOIN work_schedule ws ON s.id = ws.staff_id
-    GROUP BY s.id
+    SELECT staff.first_name, staff.last_name, COUNT(work_schedule.id) AS job_count
+    FROM staff
+    LEFT JOIN work_schedule ON staff.id = work_schedule.staff_id
+    GROUP BY staff.id
     ORDER BY job_count DESC
 ";
 $jobs_result = runAndCheckSQL($connect, $jobs_allocated_sql);
 
 // Query 2: Total Radiation Exposure by Staff
 $exposure_sql = "
-    SELECT s.first_name, s.last_name, SUM(j.radiation_exposure) AS total_exposure
-    FROM staff s
-    JOIN work_schedule ws ON s.id = ws.staff_id
-    JOIN job j ON ws.job_id = j.id
-    GROUP BY s.id
+    SELECT staff.first_name, staff.last_name, SUM(j.radiation_exposure) AS total_exposure
+    FROM staff
+    JOIN work_schedule ON staff.id = work_schedule.staff_id
+    JOIN job ON work_schedule.job_id = job.id
+    GROUP BY staff.id
     ORDER BY total_exposure DESC
 ";
 $exposure_result = runAndCheckSQL($connect, $exposure_sql);
 
 // Query 3: Staff With No Work Allocated
 $no_work_sql = "
-    SELECT s.first_name, s.last_name
-    FROM staff s
-    LEFT JOIN work_schedule ws ON s.id = ws.staff_id
-    WHERE ws.id IS NULL
+    SELECT staff.first_name, staff.last_name
+    FROM staff
+    LEFT JOIN work_schedule ON staff.id = work_schedule.staff_id
+    WHERE work_schedule.id IS NULL
 ";
 $no_work_result = runAndCheckSQL($connect, $no_work_sql);
 ?>
