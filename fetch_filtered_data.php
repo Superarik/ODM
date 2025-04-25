@@ -1,20 +1,19 @@
 <?php
 include_once("includes/_connect.php");
 
-$staff = $_POST['staff'] ?? '';
+$staff = $_POST['staff'] ?? [];
 $job = $_POST['job'] ?? '';
-$start_date = $_POST['start_date'] ?? '';
-$end_date = $_POST['end_date'] ?? '';
+
+// Convert staff array to a comma-separated string for SQL
+$staff_filter = !empty($staff) ? "s.id IN (" . implode(',', array_map('intval', $staff)) . ")" : "1=1";
 
 // Query for Jobs Allocated to Each Staff Member
 $jobs_allocated_sql = "
     SELECT CONCAT(s.first_name, ' ', s.last_name) AS name, COUNT(ws.id) AS job_count
     FROM staff s
     LEFT JOIN work_schedule ws ON s.id = ws.staff_id
-    WHERE ('$staff' = '' OR s.id = '$staff')
+    WHERE ($staff_filter)
     AND ('$job' = '' OR ws.job_id = '$job')
-    AND ('$start_date' = '' OR ws.start_date >= '$start_date')
-    AND ('$end_date' = '' OR ws.start_date <= '$end_date')
     GROUP BY s.id
     ORDER BY job_count DESC
 ";
@@ -30,10 +29,8 @@ $exposure_sql = "
     FROM staff s
     JOIN work_schedule ws ON s.id = ws.staff_id
     JOIN job j ON ws.job_id = j.id
-    WHERE ('$staff' = '' OR s.id = '$staff')
+    WHERE ($staff_filter)
     AND ('$job' = '' OR j.id = '$job')
-    AND ('$start_date' = '' OR ws.start_date >= '$start_date')
-    AND ('$end_date' = '' OR ws.start_date <= '$end_date')
     GROUP BY s.id
     ORDER BY total_exposure DESC
 ";

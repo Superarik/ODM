@@ -46,10 +46,8 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
 
     function drawCharts() {
         const filters = {
-            staff: document.getElementById('filter_staff').value,
-            job: document.getElementById('filter_job').value,
-            start_date: document.getElementById('filter_start_date').value,
-            end_date: document.getElementById('filter_end_date').value
+            staff: Array.from(document.getElementById('filter_staff').selectedOptions).map(option => option.value),
+            job: document.getElementById('filter_job').value
         };
 
         fetchFilteredData(filters, drawJobsPieChart, 'jobs_piechart');
@@ -85,8 +83,6 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
     // Redraw charts when filters change
     document.getElementById('filter_staff').addEventListener('change', drawCharts);
     document.getElementById('filter_job').addEventListener('change', drawCharts);
-    document.getElementById('filter_start_date').addEventListener('change', drawCharts);
-    document.getElementById('filter_end_date').addEventListener('change', drawCharts);
 </script>
 
 <div class="container mt-5">
@@ -94,10 +90,9 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
 
     <!-- Filters -->
     <div class="row mb-4">
-        <div class="col-md-3">
-            <label for="filter_staff">Filter by Staff</label>
-            <select id="filter_staff" class="form-control">
-                <option value="">All Staff</option>
+        <div class="col-md-6">
+            <label for="filter_staff">Filter by Staff (Multiple Selection)</label>
+            <select id="filter_staff" class="form-control" multiple>
                 <?php
                 $staff_result = mysqli_query($connect, "SELECT id, CONCAT(first_name, ' ', last_name) AS name FROM staff");
                 while ($staff = mysqli_fetch_assoc($staff_result)) {
@@ -106,7 +101,7 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
                 ?>
             </select>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-6">
             <label for="filter_job">Filter by Job</label>
             <select id="filter_job" class="form-control">
                 <option value="">All Jobs</option>
@@ -117,14 +112,6 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
                 }
                 ?>
             </select>
-        </div>
-        <div class="col-md-3">
-            <label for="filter_start_date">Start Date</label>
-            <input type="date" id="filter_start_date" class="form-control">
-        </div>
-        <div class="col-md-3">
-            <label for="filter_end_date">End Date</label>
-            <input type="date" id="filter_end_date" class="form-control">
         </div>
     </div>
 
