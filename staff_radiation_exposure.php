@@ -40,8 +40,8 @@ $staff_id = (isset($_POST["staff_id"])) ? mysqli_real_escape_string($connect, $_
                     staff.last_name,
                     SUM(job.radiation_exposure) AS exposure
                 FROM work_schedule
-                JOIN staff ON work_schedule.staff_id = staff.id
-                JOIN job ON work_schedule.job_id = job.id
+                INNER JOIN staff ON work_schedule.staff_id = staff.id
+                INNER JOIN job ON work_schedule.job_id = job.id
                 $staff_check
                 GROUP BY staff.id
                 ORDER BY exposure DESC";    

@@ -40,8 +40,8 @@ function showWorkTable($week, $day, $connect){
             location.required_clearance_level
             FROM
             work_schedule
-            JOIN staff ON work_schedule.staff_id = staff.id
-            JOIN job ON work_schedule.job_id = job.id
+            INNER JOIN staff ON work_schedule.staff_id = staff.id
+            INNER JOIN job ON work_schedule.job_id = job.id
             JOIN location ON work_schedule.location_id = location.id
             WHERE work_schedule.week_id = '$week'
             AND work_schedule.day_id = '$day';";    
@@ -133,12 +133,12 @@ function selectAllStaff($connect){
     // Make sure to ORDER BY staff.clearance_level ASC
     //
     $staff_sql = "SELECT
-                    id,
-                    first_name,
-                    last_name,
-                    clearance_level
+                    staff.id,
+                    staff.first_name,
+                    staff.last_name,
+                    staff.clearance_level
                 FROM staff
-                ORDER BY clearance_level ASC;";
+                ORDER BY staff.clearance_level ASC, staff.last_name ASC, staff.first_name ASC;";
     // ========================== /Part 6
 
     return runAndCheckSQL($connect, $staff_sql); 
@@ -164,7 +164,8 @@ function selectAllJobsAndLocations($connect){
                     location.name AS location,
                     location.required_clearance_level
                 FROM job
-                JOIN location ON job.location_id = location.id;";
+                INNER JOIN location ON job.location_id = location.id
+                ORDER BY location.required_clearance_level ASC;";
     // ========================== /Part 7
     return runAndCheckSQL($connect, $job_sql);
 }
@@ -220,12 +221,12 @@ function selectASingleWorkSchedule($connect, $id){
     // USE the php variable $id in the WHERE clause
     //
     $appointed_sql = "SELECT
-                        week_id,
-                        day_id,
-                        job_id,
-                        staff_id
+                        work_schedule.week_id,
+                        work_schedule.day_id,
+                        work_schedule.job_id,
+                        work_schedule.staff_id
                     FROM work_schedule
-                    WHERE id = '$id'";
+                    WHERE work_schedule.id = '$id'";
     // ========================== /Part 12
     return runAndCheckSQL($connect, $appointed_sql);
 }

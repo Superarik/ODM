@@ -18,10 +18,10 @@ $staff_id = (isset($_GET["id"])) ? mysqli_real_escape_string($connect, $_GET["id
 // Make sure you use $staff_id variable in your WHERE clause to SELECT staff member based on ID
 //
 $staff_data_sql = "SELECT
-                        first_name,
-                        last_name
+                        staff.first_name,
+                        staff.last_name
                     FROM staff
-                    WHERE id = '$staff_id'";
+                    WHERE staff.id = '$staff_id'";
 // ========================== /YOUR SQL HERE
 
 
@@ -74,7 +74,8 @@ if($row = mysqli_fetch_assoc($result)){
                     JOIN location ON work_schedule.location_id = location.id
                     JOIN weeks ON work_schedule.week_id = weeks.id
                     JOIN days ON work_schedule.day_id = days.id
-                    WHERE staff.id = '$staff_id'";    
+                    WHERE staff.id = '$staff_id'
+                    ORDER BY weeks.id ASC, days.id ASC;";    
         // ========================== /YOUR SQL HERE
         
         $run = runAndCheckSQL($connect, $jobs_sql);
