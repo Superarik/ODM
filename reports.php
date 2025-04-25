@@ -165,6 +165,7 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
     // Function to draw the pie chart for jobs allocated to staff
     function drawJobsPieChart(dataArray) {
         // Check if we have data beyond the header row
+        console.log(dataArray)
         if (dataArray.length <= 1) {
              document.getElementById('jobs_piechart').innerHTML = '<p class="text-center text-muted">No data to display for selected staff.</p>';
              return; // Don't draw chart if no data
