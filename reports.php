@@ -54,7 +54,7 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
     // Loads required packages
     google.charts.load('current', {'packages':['corechart', 'bar']});
     // Tells the google charts library to call the drawCharts function after the google charts library has finished loading
-    google.charts.setOnLoadCallback(drawCharts);
+    google.charts.setOnLoadCallback(initialiseCharts);
 
     // --- NEW: Global variables to store the full datasets ---
     var allJobsData = [
@@ -144,7 +144,7 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
     // --- END MODIFIED ---
 
     // --- NEW: Initial setup function ---
-    function initializeCharts() {
+    function initialiseCharts() {
         // Draw charts with all data initially
         drawJobsPieChart(allJobsData);
         drawExposureBarChart(allExposureData);
