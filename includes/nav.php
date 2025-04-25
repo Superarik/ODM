@@ -18,6 +18,9 @@
                 <li class="nav-item active">
                     <a class="nav-link" href="appoint_job.php">Appoint Job</a>
                 </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="reports.php">View Reports</a>
+                </li>
             </ul>
             <div class="topnav-right">
                 <ul class="navbar-nav mr-auto">
