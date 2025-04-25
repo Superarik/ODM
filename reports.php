@@ -7,25 +7,11 @@ include_once("includes/utils.php");
 
 <?php
 
-// Fetch available staff and jobs for filter dropdowns
-$staff_sql = "SELECT id, first_name, last_name FROM staff ORDER BY first_name, last_name";
-$staff_result = runAndCheckSQL($connect, $staff_sql);
-
-$job_sql = "SELECT id, name FROM job ORDER BY name";
-$job_result = runAndCheckSQL($connect, $job_sql);
-
-// Fetch the filter criteria from GET request
-$filter_staff = isset($_GET['staff']) ? $_GET['staff'] : '';
-$filter_job = isset($_GET['job']) ? $_GET['job'] : '';
-$filter_start_date = isset($_GET['start_date']) ? $_GET['start_date'] : '';
-$filter_end_date = isset($_GET['end_date']) ? $_GET['end_date'] : '';
-
 // Query 1: Jobs Allocated to Each Staff Member
 $jobs_allocated_sql = "
     SELECT s.first_name, s.last_name, COUNT(ws.id) AS job_count
     FROM staff s
     LEFT JOIN work_schedule ws ON s.id = ws.staff_id
-    WHERE ('$filter_staff' = '' OR s.id = '$filter_staff')
     GROUP BY s.id
     ORDER BY job_count DESC
 ";
@@ -37,10 +23,6 @@ $exposure_sql = "
     FROM staff s
     JOIN work_schedule ws ON s.id = ws.staff_id
     JOIN job j ON ws.job_id = j.id
-    WHERE ('$filter_staff' = '' OR s.id = '$filter_staff')
-    AND ('$filter_job' = '' OR j.id = '$filter_job')
-    AND ('$filter_start_date' = '' OR ws.date >= '$filter_start_date')
-    AND ('$filter_end_date' = '' OR ws.date <= '$filter_end_date')
     GROUP BY s.id
     ORDER BY total_exposure DESC
 ";
