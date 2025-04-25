@@ -6,7 +6,7 @@ include_once("includes/header.php");
 include_once("includes/nav.php");
 include_once("includes/utils.php");
 
-
+// SQL statement to fetch all staff names for the filter
 $all_staff_sql = "SELECT id, first_name, last_name FROM staff ORDER BY first_name, last_name";
 $all_staff_result = runAndCheckSQL($connect, $all_staff_sql);
 $staff_list = [];
@@ -222,7 +222,7 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
         <div class="card-body">
             <form id="filterForm" onsubmit="event.preventDefault(); drawFilteredCharts();">
                 <div class="mb-3">
-                    <label for="employeeFilterSelect" class="form-label">Select Employees (Ctrl/Cmd + Click for multiple):</label>
+                    <label for="employeeFilterSelect" class="form-label">Select Employees (Ctrl + Click for multiple):</label>
                     <select multiple class="form-select" id="employeeFilterSelect" name="selected_employees[]" size="8">
                         <?php
                         // Populate the dropdown with staff names
