@@ -9,6 +9,8 @@ include_once("includes/utils.php");
 // SQL statement to fetch all staff names for the filter
 $all_staff_sql = "SELECT id, first_name, last_name FROM staff ORDER BY first_name, last_name";
 $all_staff_result = runAndCheckSQL($connect, $all_staff_sql);
+
+// List for staff member names to be stored in
 $staff_list = [];
 if ($all_staff_result && mysqli_num_rows($all_staff_result) > 0) {
     while ($staff_row = mysqli_fetch_assoc($all_staff_result)) {
@@ -56,7 +58,7 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
     // Tells the google charts library to call the drawCharts function after the google charts library has finished loading
     google.charts.setOnLoadCallback(initialiseCharts);
 
-    // --- NEW: Global variables to store the full datasets ---
+    // Global variable to store data for all workers for how many jobs they have
     var allJobsData = [
         ['Staff Member', 'Number of Jobs'], // Header row
         <?php
@@ -65,8 +67,9 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
             while($row = mysqli_fetch_assoc($jobs_result)) {
                 // Use staff_id as a unique identifier if names clash, but display name
                 $name = $row['first_name'] . ' ' . $row['last_name'];
-                 // Ensure name is properly escaped for JavaScript string literal
+                 // Ensure name is properly escaped for JavaScript use
                 $js_safe_name = addslashes($name);
+                // Adds name and number of jobs to the variable
                 echo "['$js_safe_name', {$row['job_count']}],";
             }
         }
@@ -81,29 +84,28 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
             while($row = mysqli_fetch_assoc($exposure_result)) {
                 $name = $row['first_name'] . ' ' . $row['last_name'];
                 $js_safe_name = addslashes($name);
-                // Handle potential NULL exposure gracefully
+                // Handle potential null value
                 $exposure = isset($row['total_exposure']) ? $row['total_exposure'] : 0;
+                // Adds name and amount of exposure to the variable
                 echo "['$js_safe_name', {$exposure}],";
             }
         }
         ?>
     ];
-    // --- END NEW ---
 
-    // --- NEW: Function to get selected employee names from the filter ---
+    // Function to get selected employee names from the filter
     function getSelectedEmployeeNames() {
         const selectElement = document.getElementById('employeeFilterSelect');
         const selectedNames = [];
         if (selectElement) {
              for (const option of selectElement.selectedOptions) {
-                selectedNames.push(option.value); // The value of the option is the staff name
+                selectedNames.push(option.value);
              }
         }
         return selectedNames;
     }
-    // --- END NEW ---
 
-    // --- NEW: Function to filter data based on selection ---
+    // Function to filter data based on selection
     function filterData(originalData, selectedNames) {
         // If no names are selected, show all data
         if (selectedNames.length === 0) {
@@ -122,28 +124,23 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
         }
         return filteredData;
     }
-    // --- END NEW ---
 
-
-    // Function to draw the charts
-    // function drawCharts() {
-    //     drawJobsPieChart();
-    //     drawExposureBarChart();
-    // }
-
-    // --- MODIFIED: Main drawing function, now applies filter ---
+    // Main drawing function
     function drawFilteredCharts() {
         const selectedNames = getSelectedEmployeeNames();
 
+        // Prepares data to be drawn
         const filteredJobs = filterData(allJobsData, selectedNames);
-        drawJobsPieChart(filteredJobs); // Pass filtered data
+         // Pass filtered data when drawing
+        drawJobsPieChart(filteredJobs);
 
+        // Prepares data to be drawn
         const filteredExposure = filterData(allExposureData, selectedNames);
-        drawExposureBarChart(filteredExposure); // Pass filtered data
+        // Pass filtered data when drawing
+        drawExposureBarChart(filteredExposure);
     }
-    // --- END MODIFIED ---
 
-    // --- NEW: Initial setup function ---
+    // Initial setup function
     function initialiseCharts() {
         // Draw charts with all data initially
         drawJobsPieChart(allJobsData);
@@ -151,16 +148,11 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
 
         // Add event listener to the filter button
         const filterButton = document.getElementById('applyFilterButton');
+        // When the apply filter button is pressed, charts are redrawn and filtered
         if (filterButton) {
             filterButton.addEventListener('click', drawFilteredCharts);
         }
-         // Optional: Add listener to select change for immediate update (can be less performant/jarring)
-        // const filterSelect = document.getElementById('employeeFilterSelect');
-        // if (filterSelect) {
-        //    filterSelect.addEventListener('change', drawFilteredCharts);
-        // }
     }
-    // --- END NEW ---
 
     // Function to draw the pie chart for jobs allocated to staff
     function drawJobsPieChart(dataArray) {
@@ -214,7 +206,7 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
 <div class="container mt-5">
     <h2>📊 Staff Job Reports</h2>
 
-    <!-- NEW -->
+    // Box at top of page to allow user to filter staff
     <div class="card my-4">
         <div class="card-header">
             Filter by Staff
@@ -228,7 +220,6 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
                         // Populate the dropdown with staff names
                         foreach ($staff_list as $staff) {
                             $name = htmlspecialchars($staff['first_name'] . ' ' . $staff['last_name']);
-                            // Use the name as the value for easy JS matching
                             echo "<option value=\"$name\">$name</option>";
                         }
                         ?>
@@ -239,7 +230,6 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
             </form>
         </div>
     </div>
-    <!-- END NEW -->
 
 
     
@@ -255,7 +245,7 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
             </tr>
         </thead>
         <tbody>
-            <?php /* PHP loop for jobs table - same as before */
+            <?php /* PHP loop for jobs table */
             if ($jobs_result && mysqli_num_rows($jobs_result) > 0) {
                  mysqli_data_seek($jobs_result, 0);
                 while($row = mysqli_fetch_assoc($jobs_result)) {
@@ -279,7 +269,7 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
             </tr>
         </thead>
         <tbody>
-            <?php /* PHP loop for exposure table - same as before */
+            <?php /* PHP loop for exposure table */
              if ($exposure_result && mysqli_num_rows($exposure_result) > 0) {
                 mysqli_data_seek($exposure_result, 0);
                 while($row = mysqli_fetch_assoc($exposure_result)) {
@@ -301,7 +291,7 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
             </tr>
         </thead>
         <tbody>
-            <?php /* PHP loop for no-work table - same as before */
+            <?php /* PHP loop for no-work table */
              if ($no_work_result && mysqli_num_rows($no_work_result) > 0) {
                 mysqli_data_seek($no_work_result, 0);
                 while($row = mysqli_fetch_assoc($no_work_result)) {
