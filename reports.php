@@ -19,7 +19,7 @@ $jobs_result = runAndCheckSQL($connect, $jobs_allocated_sql);
 
 // Query 2: Total Radiation Exposure by Staff
 $exposure_sql = "
-    SELECT staff.first_name, staff.last_name, SUM(j.radiation_exposure) AS total_exposure
+    SELECT staff.first_name, staff.last_name, SUM(job.radiation_exposure) AS total_exposure
     FROM staff
     JOIN work_schedule ON staff.id = work_schedule.staff_id
     JOIN job ON work_schedule.job_id = job.id
