@@ -164,18 +164,18 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
     function drawFilteredCharts() {
         const selectedNames = getSelectedEmployeeNames();
 
-        // Prepares data to be drawn
+        // Prepares data to be drawn for the first chart
         const filteredJobs = filterData(allJobsData, selectedNames);
          // Pass filtered data when drawing
         drawJobsPieChart(filteredJobs);
 
-        // Prepares data to be drawn
+        // Prepares data to be drawn for the first chart
         const filteredExposure = filterData(allExposureData, selectedNames);
         // Pass filtered data when drawing
         drawExposureBarChart(filteredExposure);
 
-        const filteredJobsByLocation = filterData(jobsByLocationData, selectedNames);
-        drawJobsByLocationChart(filteredJobsByLocation);
+        // Pass unfiltered data for the third chart
+        drawJobsByLocationChart(jobsByLocationData);
     }
 
     // Initial setup function
