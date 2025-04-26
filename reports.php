@@ -39,7 +39,19 @@ $exposure_sql = "
 ";
 $exposure_result = runAndCheckSQL($connect, $exposure_sql);
 
-// Query 3: Staff With No Work Allocated
+// Query 3: Staff with the Most Jobs in a Specific Location
+$jobs_by_location_sql = "
+    SELECT location.name AS location_name, staff.first_name, staff.last_name, COUNT(work_schedule.id) AS job_count
+    FROM work_schedule
+    JOIN staff ON work_schedule.staff_id = staff.id
+    JOIN job ON work_schedule.job_id = job.id
+    JOIN location ON job.location_id = location.id
+    GROUP BY location.id, staff.id
+    ORDER BY location_name, job_count DESC
+";
+$jobs_by_location_result = runAndCheckSQL($connect, $jobs_by_location_sql);
+
+// Query 4: Staff With No Work Allocated
 $no_work_sql = "
     SELECT staff.first_name, staff.last_name
     FROM staff
@@ -93,6 +105,21 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
         ?>
     ];
 
+    var jobsByLocationData = [
+        ['Location', 'Staff Member', 'Number of Jobs'], // Header row
+        <?php
+        if ($jobs_by_location_result && mysqli_num_rows($jobs_by_location_result) > 0) {
+            mysqli_data_seek($jobs_by_location_result, 0); // Reset the result pointer
+            while($row = mysqli_fetch_assoc($jobs_by_location_result)) {
+                $location = addslashes($row['location_name']);
+                $name = $row['first_name'] . ' ' . $row['last_name'];
+                $js_safe_name = addslashes($name);
+                echo "['$location', '$js_safe_name', {$row['job_count']}],";
+            }
+        }
+        ?>
+    ];
+
     // Function to get selected employee names from the filter
     function getSelectedEmployeeNames() {
         const selectElement = document.getElementById('employeeFilterSelect');
@@ -138,6 +165,9 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
         const filteredExposure = filterData(allExposureData, selectedNames);
         // Pass filtered data when drawing
         drawExposureBarChart(filteredExposure);
+
+        const filteredJobsByLocation = filterData(jobsByLocationData, selectedNames);
+        drawJobsByLocationChart(filteredJobsByLocation);
     }
 
     // Initial setup function
@@ -145,6 +175,8 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
         // Draw charts with all data initially
         drawJobsPieChart(allJobsData);
         drawExposureBarChart(allExposureData);
+
+        drawJobsByLocationChart(jobsByLocationData);
 
         // Add event listener to the filter button
         const filterButton = document.getElementById('applyFilterButton');
@@ -283,7 +315,32 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
         </tbody>
     </table>
 
-    <h4 class="mt-5">3. Staff With No Work Allocated</h4>
+    <h4 class="mt-5">3. Jobs by Location and Staff</h4>
+    <div id="jobs_by_location_chart" style="width: 100%; min-height: 100px;"></div>
+    <h5 class="mt-3">Full Data Table (Jobs by Location)</h5>
+    <table class="table table-striped table-sm">
+        <thead>
+            <tr>
+                <th>Location</th>
+                <th>Staff Name</th>
+                <th>Number of Jobs</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            if ($jobs_by_location_result && mysqli_num_rows($jobs_by_location_result) > 0) {
+                mysqli_data_seek($jobs_by_location_result, 0);
+                while ($row = mysqli_fetch_assoc($jobs_by_location_result)) {
+                    echo "<tr><td>{$row['location_name']}</td><td>{$row['first_name']} {$row['last_name']}</td><td>{$row['job_count']}</td></tr>";
+                }
+            } else {
+                echo "<tr><td colspan='3'>No data found for jobs by location.</td></tr>";
+            }
+            ?>
+        </tbody>
+    </table>
+
+    <h4 class="mt-5">4. Staff With No Work Allocated</h4>
     <table class="table table-hover table-sm">
         <thead>
             <tr>
