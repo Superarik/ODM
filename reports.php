@@ -88,6 +88,7 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
         ?>
     ];
 
+    // Global variable to store data for all workers for how much exposure they have
     var allExposureData = [
         ['Staff Member', 'Radiation Exposure'], // Header row
         <?php
@@ -105,6 +106,7 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
         ?>
     ];
 
+    // Global variable to store data for where they work
     var jobsByLocationData = [
         ['Location', 'Staff Member', 'Number of Jobs'], // Header row
         <?php
@@ -176,6 +178,7 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
         drawJobsPieChart(allJobsData);
         drawExposureBarChart(allExposureData);
 
+        console.log(jobsByLocationData)
         drawJobsByLocationChart(jobsByLocationData);
 
         // Add event listener to the filter button
