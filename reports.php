@@ -41,12 +41,17 @@ $exposure_result = runAndCheckSQL($connect, $exposure_sql);
 
 // Query 3: Staff with the Most Jobs in a Specific Location
 $jobs_by_location_sql = "
-    SELECT location.name AS location_name, COUNT(work_schedule.id) AS job_count
+    SELECT 
+        location.name AS location_name, 
+        staff.first_name, 
+        staff.last_name, 
+        COUNT(work_schedule.id) AS job_count
     FROM work_schedule
     JOIN job ON work_schedule.job_id = job.id
     JOIN location ON job.location_id = location.id
-    GROUP BY location.id
-    ORDER BY location_name
+    JOIN staff ON work_schedule.staff_id = staff.id
+    GROUP BY location.id, staff.id
+    ORDER BY location_name, staff.first_name, staff.last_name
 ";
 $jobs_by_location_result = runAndCheckSQL($connect, $jobs_by_location_sql);
 
