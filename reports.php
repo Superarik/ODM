@@ -206,7 +206,7 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
 <div class="container mt-5">
     <h2>📊 Staff Job Reports</h2>
 
-    // Box at top of page to allow user to filter staff
+    <!-- Box at top of page to allow user to filter staff -->
     <div class="card my-4">
         <div class="card-header">
             Filter by Staff
