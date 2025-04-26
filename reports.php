@@ -41,13 +41,12 @@ $exposure_result = runAndCheckSQL($connect, $exposure_sql);
 
 // Query 3: Staff with the Most Jobs in a Specific Location
 $jobs_by_location_sql = "
-    SELECT location.name AS location_name, staff.first_name, staff.last_name, COUNT(work_schedule.id) AS job_count
+    SELECT location.name AS location_name, COUNT(work_schedule.id) AS job_count
     FROM work_schedule
-    JOIN staff ON work_schedule.staff_id = staff.id
     JOIN job ON work_schedule.job_id = job.id
     JOIN location ON job.location_id = location.id
-    GROUP BY location.id, staff.id
-    ORDER BY location_name, job_count DESC
+    GROUP BY location.id
+    ORDER BY location_name
 ";
 $jobs_by_location_result = runAndCheckSQL($connect, $jobs_by_location_sql);
 
@@ -108,19 +107,17 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
 
     // Global variable to store data for where they work
     var jobsByLocationData = [
-        ['Location', 'Staff Member', 'Number of Jobs'], // Header row
-        <?php
-        if ($jobs_by_location_result && mysqli_num_rows($jobs_by_location_result) > 0) {
-            mysqli_data_seek($jobs_by_location_result, 0); // Reset the result pointer
-            while($row = mysqli_fetch_assoc($jobs_by_location_result)) {
-                $location = addslashes($row['location_name']);
-                $name = $row['first_name'] . ' ' . $row['last_name'];
-                $js_safe_name = addslashes($name);
-                echo "['$location', '$js_safe_name', {$row['job_count']}],";
-            }
+    ['Location', 'Number of Jobs'], // Header row
+    <?php
+    if ($jobs_by_location_result && mysqli_num_rows($jobs_by_location_result) > 0) {
+        mysqli_data_seek($jobs_by_location_result, 0); // Reset pointer
+        while($row = mysqli_fetch_assoc($jobs_by_location_result)) {
+            $location = addslashes($row['location_name']);
+            echo "['$location', {$row['job_count']}],";
         }
-        ?>
-    ];
+    }
+    ?>
+];
 
     // Function to get selected employee names from the filter
     function getSelectedEmployeeNames() {
@@ -252,7 +249,7 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
             title: 'Jobs by Location and Staff',
             height: 400,
             hAxis: { title: 'Location' },
-            vAxis: { title: 'Number of Jobs' },
+            vAxis: { title: 'Number of Jobs', format: 'decimal' },
             legend: { position: 'top', maxLines: 3 },
             bar: { groupWidth: '75%' },
             isStacked: true
