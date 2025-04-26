@@ -191,30 +191,6 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
         }
     }
 
-    // Function to draw the pie chart for jobs allocated to staff
-    function drawJobsPieChart(dataArray) {
-        // Check if we have data beyond the header row
-        const filteredData = dataArray.filter((row, index) => {
-            return index === 0 || row[1] > 0; // Keep the header row or rows with values > 0
-        });
-        if (filteredData.length <= 1) {
-             document.getElementById('jobs_piechart').innerHTML = '<p class="text-center text-muted">No data to display for selected staff.</p>';
-             return; // Don't draw chart if no data
-        }
-
-        var data = google.visualization.arrayToDataTable(dataArray);
-
-        var options = {
-            title: 'Jobs Allocated to Staff',
-            pieHole: 0.4,
-            // Ensure height is reset if previously cleared
-            height: 400
-        };
-
-        // Create and draw the chart
-        var chart = new google.visualization.PieChart(document.getElementById('jobs_piechart'));
-        chart.draw(data, options);
-    }
 
     // Function for drawing the bar chart for radiation exposure by staff
     function drawExposureBarChart(dataArray) {
@@ -262,6 +238,32 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
 
         // Create and draw the chart
         var chart = new google.visualization.ColumnChart(document.getElementById('jobs_by_location_chart'));
+        chart.draw(data, options);
+    }
+
+    // Function to draw the pie chart for jobs allocated to staff
+    function drawJobsPieChart(dataArray) {
+        // Check if we have data beyond the header row
+        const filteredData = dataArray.filter((row, index) => {
+            return index === 0 || row[1] > 0; // Keep the header row or rows with values > 0
+        });
+        if (filteredData.length <= 1) {
+             document.getElementById('jobs_piechart').innerHTML = '<p class="text-center text-muted">No data to display for selected staff.</p>';
+             return; // Don't draw chart if no data
+        }
+
+        var data = google.visualization.arrayToDataTable(dataArray);
+
+        // Chart options
+        var options = {
+            title: 'Jobs Allocated to Staff',
+            pieHole: 0.4,
+            // Ensure height is reset if previously cleared
+            height: 400
+        };
+
+        // Create and draw the chart
+        var chart = new google.visualization.PieChart(document.getElementById('jobs_piechart'));
         chart.draw(data, options);
     }
 </script>
@@ -358,7 +360,7 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
             </tr>
         </thead>
         <tbody>
-            <?php
+            <?php /* PHP loop for location table */
             if ($jobs_by_location_result && mysqli_num_rows($jobs_by_location_result) > 0) {
                 mysqli_data_seek($jobs_by_location_result, 0);
                 while ($row = mysqli_fetch_assoc($jobs_by_location_result)) {
