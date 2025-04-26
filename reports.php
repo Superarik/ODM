@@ -206,6 +206,7 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
             height: 400
         };
 
+        // Create and draw the chart
         var chart = new google.visualization.PieChart(document.getElementById('jobs_piechart'));
         chart.draw(data, options);
     }
@@ -229,8 +230,33 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
             legend: { position: 'none' } // Hide legend if many bars make it cluttered
         };
 
-        // Use ColumnChart for vertical bars
+        // Create and draw the chart
         var chart = new google.visualization.ColumnChart(document.getElementById('exposure_barchart'));
+        chart.draw(data, options);
+    }
+
+    // Function to draw the bar chart for jobs by location
+    function drawJobsByLocationChart(dataArray) {
+        // Check if we have data beyond the header row
+        if (dataArray.length <= 1) {
+            document.getElementById('jobs_by_location_chart').innerHTML = '<p class="text-center text-muted">No data to display for jobs by location.</p>';
+            return; // Don't draw chart if no data
+        }
+        var data = google.visualization.arrayToDataTable(dataArray);
+
+        // Chart options
+        var options = {
+            title: 'Jobs by Location and Staff',
+            height: 400,
+            hAxis: { title: 'Location' },
+            vAxis: { title: 'Number of Jobs' },
+            legend: { position: 'top', maxLines: 3 },
+            bar: { groupWidth: '75%' },
+            isStacked: true
+        };
+
+        // Create and draw the chart
+        var chart = new google.visualization.ColumnChart(document.getElementById('jobs_by_location_chart'));
         chart.draw(data, options);
     }
 </script>
