@@ -183,8 +183,6 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
         // Draw charts with all data initially
         drawJobsPieChart(allJobsData);
         drawExposureBarChart(allExposureData);
-
-        console.log(jobsByLocationData)
         drawJobsByLocationChart(jobsByLocationData);
 
         // Add event listener to the filter button
