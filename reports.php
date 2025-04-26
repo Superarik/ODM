@@ -118,6 +118,7 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
         mysqli_data_seek($jobs_by_location_result, 0); // Reset pointer
         while($row = mysqli_fetch_assoc($jobs_by_location_result)) {
             $location = addslashes($row['location_name']);
+            // Adds location and job count to the variable
             echo "['$location', {$row['job_count']}],";
         }
     }
@@ -153,6 +154,9 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
                 filteredData.push(originalData[i]);
             }
         }
+        console.log(originalData);
+        console.log(filteredData);
+        
         return filteredData;
     }
 
