@@ -154,8 +154,6 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
                 filteredData.push(originalData[i]);
             }
         }
-        console.log(originalData);
-        console.log(filteredData);
         
         return filteredData;
     }
@@ -274,7 +272,7 @@ $no_work_result = runAndCheckSQL($connect, $no_work_sql);
     <!-- Box at top of page to allow user to filter staff -->
     <div class="card my-4">
         <div class="card-header">
-            Filter by Staff
+            Filter by Staff (only affects first two charts)
         </div>
         <div class="card-body">
             <form id="filterForm" onsubmit="event.preventDefault(); drawFilteredCharts();">
